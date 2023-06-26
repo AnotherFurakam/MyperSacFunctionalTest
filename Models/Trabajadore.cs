@@ -21,8 +21,6 @@ public partial class Trabajadore
 
     public int? IdDistrito { get; set; }
 
-    public virtual ICollection<Cuenta> Cuenta { get; set; } = new List<Cuenta>();
-
     public virtual Departamento IdDepartamentoNavigation { get; set; }
 
     public virtual Distrito IdDistritoNavigation { get; set; }

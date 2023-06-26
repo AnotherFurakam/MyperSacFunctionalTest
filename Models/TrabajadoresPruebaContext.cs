@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using MyperSacFunctionalTest.Config;
-using MyperSacFunctionalTest.Models.NokeyModels;
+using MyperSacFunctionalTest.NokeyModels;
 
 namespace MyperSacFunctionalTest.Models;
 
@@ -17,18 +16,14 @@ public partial class TrabajadoresPruebaContext : DbContext
     {
     }
 
-    //Modelo que recive el resultado del procedimiento almacenado
+    //Configurando model para el procedimiento almacenado que trae el listado de Trabajadores
     public DbSet<SpTrabajadorResponse> SpTrabajadorResponses { get; set; }
-
-    public virtual DbSet<Cuenta> Cuentas { get; set; }
 
     public virtual DbSet<Departamento> Departamentos { get; set; }
 
     public virtual DbSet<Distrito> Distritos { get; set; }
 
     public virtual DbSet<Provincium> Provincia { get; set; }
-
-    public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Trabajadore> Trabajadores { get; set; }
 
@@ -37,35 +32,10 @@ public partial class TrabajadoresPruebaContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new TrabajadorProcedureConfig());
-
-        modelBuilder.Entity<Cuenta>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Cuentas__3214EC07851DA617");
-
-            entity.Property(e => e.HashPassword)
-                .IsRequired()
-                .HasMaxLength(500)
-                .IsUnicode(false);
-            entity.Property(e => e.SaltPassword)
-                .IsRequired()
-                .HasMaxLength(500)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Cuenta)
-                .HasForeignKey(d => d.IdRol)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Cuentas__IdRol__59063A47");
-
-            entity.HasOne(d => d.IdTrabajadorNavigation).WithMany(p => p.Cuenta)
-                .HasForeignKey(d => d.IdTrabajador)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Cuentas__IdTraba__5812160E");
-        });
-
+        modelBuilder.Entity<SpTrabajadorResponse>().HasNoKey();
         modelBuilder.Entity<Departamento>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Departam__3214EC0736BB1BC9");
+            entity.HasKey(e => e.Id).HasName("PK__Departam__3214EC07F357875D");
 
             entity.ToTable("Departamento");
 
@@ -76,7 +46,7 @@ public partial class TrabajadoresPruebaContext : DbContext
 
         modelBuilder.Entity<Distrito>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Distrito__3214EC075E8022A1");
+            entity.HasKey(e => e.Id).HasName("PK__Distrito__3214EC0714985E6B");
 
             entity.ToTable("Distrito");
 
@@ -91,7 +61,7 @@ public partial class TrabajadoresPruebaContext : DbContext
 
         modelBuilder.Entity<Provincium>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Provinci__3214EC07016BACD9");
+            entity.HasKey(e => e.Id).HasName("PK__Provinci__3214EC070698F4FC");
 
             entity.Property(e => e.NombreProvincia)
                 .HasMaxLength(500)
@@ -102,19 +72,9 @@ public partial class TrabajadoresPruebaContext : DbContext
                 .HasConstraintName("FK__Provincia__IdDep__3E52440B");
         });
 
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC0791AF6BEB");
-
-            entity.Property(e => e.Nombre)
-                .IsRequired()
-                .HasMaxLength(20)
-                .IsUnicode(false);
-        });
-
         modelBuilder.Entity<Trabajadore>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Trabajad__3214EC0757A1582D");
+            entity.HasKey(e => e.Id).HasName("PK__Trabajad__3214EC0783E4F962");
 
             entity.Property(e => e.Nombres)
                 .HasMaxLength(500)

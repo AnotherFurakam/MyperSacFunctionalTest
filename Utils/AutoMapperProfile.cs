@@ -4,7 +4,7 @@ using MyperSacFunctionalTest.Dto.Distrito;
 using MyperSacFunctionalTest.Dto.Provincia;
 using MyperSacFunctionalTest.Dto.Trabajador;
 using MyperSacFunctionalTest.Models;
-using MyperSacFunctionalTest.Models.NokeyModels;
+using MyperSacFunctionalTest.NokeyModels;
 
 namespace MyperSacFunctionalTest.Utils
 {
@@ -17,6 +17,7 @@ namespace MyperSacFunctionalTest.Utils
             CreateMap<CreateTrabajadorDto, Trabajadore>();
             CreateMap<Trabajadore, TrabajadorDto>();
             CreateMap<SpTrabajadorResponse, TrabajadorDto>();
+            CreateMap<Trabajadore, GetTrabajadorDto>();
 
             //Provincia
             CreateMap<Provincium, ProvinciaDto>();

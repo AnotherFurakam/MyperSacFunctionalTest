@@ -17,6 +17,14 @@ namespace MyperSacFunctionalTest.Controllers
             _trabajadorService = trabajadorService;
         }
 
+        [HttpGet("{id_trabajador}")]
+        public async Task<ActionResult<ApiResponse<GetTrabajadorDto>>> GetById(int id_trabajador)
+        {
+            var response = await _trabajadorService.GetById(id_trabajador);
+            if (response.Status == HttpStatusCode.NotFound) return NotFound(response);
+            return Ok(response);
+        }
+
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<TrabajadorDto>>>> GetAll()
         {
@@ -24,6 +32,15 @@ namespace MyperSacFunctionalTest.Controllers
             if (response.Status == HttpStatusCode.BadRequest) return BadRequest(response);
             return Ok(response);
         }
+
+        [HttpGet("By-sexo")]
+        public async Task<ActionResult<ApiResponse<List<TrabajadorDto>>>> GetAllBySexo([FromQuery]string sexo)
+        {
+            var response = await _trabajadorService.GetAllBySexo(sexo);
+            if (response.Status == HttpStatusCode.BadRequest) return BadRequest(response);
+            return Ok(response);
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<TrabajadorDto>>> AddTrabajador(CreateTrabajadorDto createTrabajadorDto)

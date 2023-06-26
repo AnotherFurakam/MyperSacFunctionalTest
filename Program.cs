@@ -27,8 +27,20 @@ builder.Services.AddScoped<ITrabajadorService, TrabajadorServiceImpl>();
 builder.Services.AddScoped<IDepartamentoService, DepartamentoServiceImpl>();
 builder.Services.AddScoped<IProvinciaService, ProvinciaServiceImpl>();
 
+//Configuración de CORS
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Test_corspolicy", build =>
+    {
+    build.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:5173");
+    });
+}); 
 
 var app = builder.Build();
+
+//Utilizando la configuración de cors
+app.UseCors("Test_corspolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

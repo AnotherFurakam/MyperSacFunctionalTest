@@ -1,4 +1,4 @@
-﻿namespace MyperSacFunctionalTest.Models.NokeyModels
+﻿namespace MyperSacFunctionalTest.NokeyModels
 {
     public class SpTrabajadorResponse
     {

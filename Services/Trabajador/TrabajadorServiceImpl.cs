@@ -5,6 +5,7 @@ using MyperSacFunctionalTest.Enums;
 using MyperSacFunctionalTest.Exceptions;
 using MyperSacFunctionalTest.Models;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace MyperSacFunctionalTest.Services.Trabajador
 {
@@ -38,7 +39,7 @@ namespace MyperSacFunctionalTest.Services.Trabajador
 
             //Validando que le formato de sexo sea correcto (valores permitidos M o F)
             if (!Sexo.MASCULINO.ToString().Equals(trabajadorDto.Sexo.ToUpper()) && !Sexo.FEMENINO.Equals(trabajadorDto.Sexo.ToUpper()))
-                throw new ApiException(HttpStatusCode.BadRequest, "El formato de sexo es inválido solo se acepta M o F ");
+                throw new ApiException(HttpStatusCode.BadRequest, "El formato de sexo, es inválido solo se acepta M o F ");
 
         }
 
@@ -49,6 +50,34 @@ namespace MyperSacFunctionalTest.Services.Trabajador
             var trabajador = responseDbProcedure.FirstOrDefault()
                 ?? throw new ApiException(HttpStatusCode.BadRequest, "Error al obtener los datos del usuario.");
             return _mapper.Map<TrabajadorDto>(trabajador);
+        }
+
+        /*Métodos del servicio*/
+
+        public async Task<ApiResponse<GetTrabajadorDto>> GetById(int id_trabjador)
+        {
+            var response = new ApiResponse<GetTrabajadorDto>();
+            try
+            {
+                var trabajador = await _context.Trabajadores.FirstOrDefaultAsync(t => t.Id == id_trabjador)
+                    ?? throw new ApiException(HttpStatusCode.NotFound, "Trabajador no encontrado");
+
+                response.Data = _mapper.Map<GetTrabajadorDto>(trabajador);
+                response.Status = HttpStatusCode.OK;
+            }
+            catch (ApiException err)
+            {
+                response.Status = err.StatusCode;
+                response.Success = false;
+                response.Message = err.Message;
+            }
+            catch (Exception err)
+            {
+                response.Status = HttpStatusCode.InternalServerError;
+                response.Success = false;
+                response.Message = err.Message;
+            }
+            return response;
         }
 
 
@@ -173,6 +202,39 @@ namespace MyperSacFunctionalTest.Services.Trabajador
                 response.Status = HttpStatusCode.OK;
                 response.Message = "Trabajador eliminado con éxito";
 
+            }
+            catch (ApiException err)
+            {
+                response.Success = false;
+                response.Status = err.StatusCode;
+                response.Message = err.Message;
+            }
+            catch (Exception err)
+            {
+                response.Success = false;
+                response.Status = HttpStatusCode.InternalServerError;
+                response.Message = err.Message;
+            }
+            return response;
+
+        }
+
+        public async Task<ApiResponse<List<TrabajadorDto>>> GetAllBySexo(string sexo)
+        {
+            var response = new ApiResponse<List<TrabajadorDto>>();
+            try
+            {
+
+                //Validando que le formato de sexo sea correcto (valores permitidos M o F)
+                sexo = sexo.ToUpper();
+                if (!Sexo.MASCULINO.ToString().Equals(sexo) && !Sexo.FEMENINO.Equals(sexo))
+                    throw new ApiException(HttpStatusCode.BadRequest, "El formato de sexo es inválido, solo se acepta M o F ");
+
+                var trabajadores = await _context.SpTrabajadorResponses.FromSqlInterpolated($"EXEC spListarTrabajadoresPorSexo {sexo}").ToListAsync();
+
+                response.Data = trabajadores.Select(t => _mapper.Map<TrabajadorDto>(t)).ToList();
+                response.Status = HttpStatusCode.OK;
+                response.Message = "Listado exitosamente";
             }
             catch (ApiException err)
             {
